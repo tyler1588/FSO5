@@ -1,6 +1,9 @@
 const Blog = ({blog}) => (
   <div>
-    {blog.title} {blog.author}
+    <h2>Title: {blog.title}</h2>
+    <p>Content: {blog.content}</p>
+    <p>Author: {blog.user.name}</p>
+    <p>Likes: {blog.likes}</p>
   </div>  
 )
 

@@ -5,10 +5,23 @@ import loginService from './services/login'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [newBlog, setNewBlog] = useState('')
+  const [newBlog, setNewBlog] = useState({title: '', content: '', likes: 0})
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+
+  // to clear the localStorage after 1 hour
+  var hours = 1; 
+  var now = new Date().getTime();
+  var setupTime = localStorage.getItem('setupTime');
+  if (setupTime == null) {
+      localStorage.setItem('setupTime', now)
+  } else {
+      if(now-setupTime > hours*60*60*1000) {
+          localStorage.clear()
+          localStorage.setItem('setupTime', now);
+      }
+  }
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -21,6 +34,7 @@ const App = () => {
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
+      blogService.setToken(user.token)
     }
   }, [])
 
@@ -31,6 +45,7 @@ const App = () => {
         username, password
       })
 
+      blogService.setToken(user.token)
       window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user)) 
 
       setUser(user)
@@ -60,11 +75,17 @@ const App = () => {
     setUser(null)
   }
 
-  const addBlog = event => {
+  const addBlog = async event => {
     event.preventDefault()
-    console.log("blog",   newBlog)
-    console.log("username", username)
-    console.log("password", password)
+    try {
+      await blogService.create(newBlog)
+      setNewBlog({title: '', content: '', likes: 0})
+      const blogs = await blogService.getAll()
+      setBlogs(blogs)
+    }
+    catch (exception) {
+      console.log(exception)
+    }
   }
 
   const blogForm = () => {
@@ -73,11 +94,23 @@ const App = () => {
         <div>{user.name} logged in <button onClick={logOut}>log out</button>
         </div>
         <form onSubmit={addBlog}>
-          <input
-            value={newBlog}
-            onChange={({target}) => setNewBlog(target.value)}
+          <div>
+            title
+            <input
+            name="title"
+            value={newBlog.title}
+            onChange={({target}) => setNewBlog({...newBlog, title: target.value})}
           />
-          <button type="submit">save</button>
+          </div>
+          <div>
+            content
+            <input
+            name="content"
+            value={newBlog.content}
+            onChange={({target}) => setNewBlog({...newBlog, content: target.value})}
+          />
+          </div>
+          <button type="submit" onClick={addBlog}>save</button>
         </form>  
       </div>
       
