@@ -1,10 +1,19 @@
-const Blog = ({blog}) => (
-  <div>
-    <h2>Title: {blog.title}</h2>
-    <p>Content: {blog.content}</p>
-    <p>Author: {blog.user.name}</p>
-    <p>Likes: {blog.likes}</p>
-  </div>  
-)
+const Blog = ({blog, toggleBlogVisible}) => {
+  const style = {
+    "display": blog.visible ? "" : "none"
+  }
+  
+  return (
+    <div>
+      <h2>Title: {blog.title} <button onClick={() => toggleBlogVisible(blog.id)}>{blog.visible ? "hide" : "show"}</button></h2>
+      <div style={style}>
+        <p>Content: {blog.content}</p>
+        <p>Author: {blog.user.name}</p>
+        <p>Likes: {blog.likes} <button>like</button></p>
+      </div>
+    </div>  
+  )
+ 
+}
 
 export default Blog

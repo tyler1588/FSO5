@@ -29,9 +29,10 @@ const App = () => {
       }
   }
 
+  console.log(blogs)
   useEffect(() => {
     blogService.getAll().then(blogs =>
-      setBlogs( blogs )
+      setBlogs( blogs.map(blog => ({...blog, visible: false})) )
     )  
   }, [])
 
@@ -77,7 +78,7 @@ const App = () => {
       await blogService.create(newBlog)
       setNewBlog({title: '', content: '', likes: 0})
       const blogs = await blogService.getAll()
-      setBlogs(blogs)
+      setBlogs(blogs.map(blog => ({...blog, visible: false})))
       setMessage({text: `Added ${newBlog.title}`, colour: "green"})
       setTimeout(() => {
         setMessage(null)
@@ -138,11 +139,16 @@ const App = () => {
     )
   }
 
+  const toggleBlogVisible = (id) => {
+    console.log(id)
+    setBlogs(blogs.map(blog => blog.id !== id ? blog : {...blog, visible: !blog.visible}))
+  }
+
   const displayBlogs = () => {
     return (
       <>
         {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} toggleBlogVisible={toggleBlogVisible}/> 
         )}
       </>
     )
