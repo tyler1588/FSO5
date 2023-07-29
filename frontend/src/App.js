@@ -29,7 +29,6 @@ const App = () => {
       }
   }
 
-  console.log(blogs)
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs.map(blog => ({...blog, visible: false})) )
@@ -59,7 +58,6 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-        console.log('ran')
       setMessage({text: 'Invalid Credentials', colour: "red"})
       setTimeout(() => {
         setMessage(null)
@@ -140,15 +138,35 @@ const App = () => {
   }
 
   const toggleBlogVisible = (id) => {
-    console.log(id)
     setBlogs(blogs.map(blog => blog.id !== id ? blog : {...blog, visible: !blog.visible}))
   }
 
+  const addLike = async (id) => {
+    const toUpdate = blogs.filter(blog => blog.id === id)[0]
+    const updatedBlog = {
+      id: toUpdate.id,
+      content: toUpdate.content,
+      title: toUpdate.title,
+      likes: toUpdate.likes + 1,
+      user: toUpdate.user.id
+    }
+    try {
+      await blogService.update(updatedBlog) 
+      const blogs = await blogService.getAll()
+      setBlogs(blogs)
+    }
+    catch (exception) {
+      console.log(exception)
+    }
+    
+  }
+
   const displayBlogs = () => {
+    const sorted = blogs.sort((a,b) => b.likes - a.likes)
     return (
       <>
-        {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} toggleBlogVisible={toggleBlogVisible}/> 
+        {sorted.map(blog =>
+        <Blog key={blog.id} blog={blog} toggleBlogVisible={toggleBlogVisible} addLike={addLike}/> 
         )}
       </>
     )

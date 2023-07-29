@@ -1,4 +1,4 @@
-const Blog = ({blog, toggleBlogVisible}) => {
+const Blog = ({blog, toggleBlogVisible, addLike}) => {
   const style = {
     "display": blog.visible ? "" : "none"
   }
@@ -9,7 +9,7 @@ const Blog = ({blog, toggleBlogVisible}) => {
       <div style={style}>
         <p>Content: {blog.content}</p>
         <p>Author: {blog.user.name}</p>
-        <p>Likes: {blog.likes} <button>like</button></p>
+        <p>Likes: {blog.likes} <button onClick={() => addLike(blog.id)}>like</button></p>
       </div>
     </div>  
   )
