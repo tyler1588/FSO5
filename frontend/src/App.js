@@ -137,11 +137,11 @@ const App = () => {
     )
   }
 
-  const toggleBlogVisible = (id) => {
+  const toggleBlogVisible = id => {
     setBlogs(blogs.map(blog => blog.id !== id ? blog : {...blog, visible: !blog.visible}))
   }
 
-  const addLike = async (id) => {
+  const addLike = async id => {
     const toUpdate = blogs.filter(blog => blog.id === id)[0]
     const updatedBlog = {
       id: toUpdate.id,
@@ -157,8 +157,21 @@ const App = () => {
     }
     catch (exception) {
       console.log(exception)
+    } 
+  }
+
+  const removeBlog = async id => {
+    const toDelete = blogs.filter(blog => blog.id === id)[0]
+    if (window.confirm(`Remove ${toDelete.title} by ${user.name}?`)){
+      try {
+        await blogService.remove(id)
+        const blogs = await blogService.getAll()
+        setBlogs(blogs)
+      }
+      catch (exception) {
+        console.log(exception)
+      } 
     }
-    
   }
 
   const displayBlogs = () => {
@@ -166,7 +179,13 @@ const App = () => {
     return (
       <>
         {sorted.map(blog =>
-        <Blog key={blog.id} blog={blog} toggleBlogVisible={toggleBlogVisible} addLike={addLike}/> 
+        <Blog 
+          key={blog.id} 
+          blog={blog} 
+          toggleBlogVisible={toggleBlogVisible} 
+          addLike={addLike} 
+          user={user} 
+          removeBlog={removeBlog}/> 
         )}
       </>
     )

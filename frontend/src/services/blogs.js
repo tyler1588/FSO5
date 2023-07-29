@@ -38,5 +38,16 @@ const update = async newObject => {
   }
 }
 
+const remove = async id => {
+  try {
+    const response = await axios.delete(baseUrl + '/' + id)
+    return response.data
+  }
+
+  catch (exception) {
+    console.log(exception)
+  }
+}
+
 // eslint-disable-next-line import/no-anonymous-default-export
-export default { getAll, create, setToken, update }
+export default { getAll, create, setToken, update, remove }

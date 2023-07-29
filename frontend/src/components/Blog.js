@@ -1,6 +1,10 @@
-const Blog = ({blog, toggleBlogVisible, addLike}) => {
+const Blog = ({blog, toggleBlogVisible, addLike, user, removeBlog}) => {
   const style = {
     "display": blog.visible ? "" : "none"
+  }
+
+  const removeBtnStyle = {
+    "display": user && user.id === blog.user.id ? "" : "none"
   }
   
   return (
@@ -10,6 +14,7 @@ const Blog = ({blog, toggleBlogVisible, addLike}) => {
         <p>Content: {blog.content}</p>
         <p>Author: {blog.user.name}</p>
         <p>Likes: {blog.likes} <button onClick={() => addLike(blog.id)}>like</button></p>
+        <button onClick={() => removeBlog(blog.id)} style={removeBtnStyle}>remove</button>
       </div>
     </div>  
   )
