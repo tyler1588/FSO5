@@ -8,7 +8,7 @@ const Blog = ({blog, toggleBlogVisible, addLike, user, removeBlog}) => {
   }
   
   return (
-    <div>
+    <div className='blog'>
       <h2>Title: {blog.title} <button onClick={() => toggleBlogVisible(blog.id)}>{blog.visible ? "hide" : "show"}</button></h2>
       <div style={style}>
         <p>Content: {blog.content}</p>
@@ -18,7 +18,6 @@ const Blog = ({blog, toggleBlogVisible, addLike, user, removeBlog}) => {
       </div>
     </div>  
   )
- 
 }
 
 export default Blog

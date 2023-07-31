@@ -5,6 +5,7 @@ import notification from './components/notification'
 import loginService from './services/login'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
+import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -13,8 +14,6 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [message, setMessage] = useState(null)
-  const [loginVisible, setLoginVisible] = useState(false)
-  const [blogFormVisible, setBlogFormVisible] = useState(false)
 
   // to clear the localStorage after 1 hour
   var hours = 1; 
@@ -87,56 +86,6 @@ const App = () => {
     }
   }
 
-  const blogForm = () => {
-    const hideWhenVisible = { display: blogFormVisible ? 'none' : '' }
-    const showWhenVisible = { display: blogFormVisible ? '' : 'none' }
-
-    return (
-      <div>
-        <h1>blogs</h1>
-        <div>{user.name} logged in <button onClick={logOut}>log out</button></div>
-        <div style={hideWhenVisible}>
-          <button onClick={() => setBlogFormVisible(true)}>add blog</button>
-        </div>
-        <div style={showWhenVisible}>
-          <h2>create new</h2>
-          <BlogForm
-            user={user}
-            logOut={logOut}
-            addBlog={addBlog}
-            newBlog={newBlog}
-            setNewBlog={setNewBlog}
-          />
-          <button onClick={() => setBlogFormVisible(false)}>cancel</button>
-        </div>
-      </div>
-    )
-  }
-
-  const loginForm = () => {
-    const hideWhenVisible = { display: loginVisible ? 'none' : '' }
-    const showWhenVisible = { display: loginVisible ? '' : 'none' }
-
-    return (
-      <div>
-        <div style={hideWhenVisible}>
-          <button onClick={() => setLoginVisible(true)}>log in</button>
-        </div>
-        <div style={showWhenVisible}>
-        <h2>Log in to application</h2>
-          <LoginForm
-            handleLogin={handleLogin}
-            username={username}
-            setUsername={setUsername}
-            password={password}
-            setPassword={setPassword}
-          />
-          <button onClick={() => setLoginVisible(false)}>cancel</button>
-        </div>
-      </div>
-    )
-  }
-
   const toggleBlogVisible = id => {
     setBlogs(blogs.map(blog => blog.id !== id ? blog : {...blog, visible: !blog.visible}))
   }
@@ -178,6 +127,7 @@ const App = () => {
     const sorted = blogs.sort((a,b) => b.likes - a.likes)
     return (
       <>
+        <h1>blogs</h1>
         {sorted.map(blog =>
         <Blog 
           key={blog.id} 
@@ -194,7 +144,29 @@ const App = () => {
   return (
     <div>
       {notification(message)}
-      {user === null ? loginForm() : blogForm()}     
+      {!user &&
+      <Togglable buttonLabel='login'>
+        <LoginForm
+          handleLogin={handleLogin}
+          username={username}
+          setUsername={setUsername}
+          password={password}
+          setPassword={setPassword}
+        />
+      </Togglable>}
+      {user &&
+      <>
+        <div>{user.name} logged in <button onClick={logOut}>log out</button></div>
+        <Togglable buttonLabel='new blog'>
+          <BlogForm
+            user={user}
+            logOut={logOut}
+            addBlog={addBlog}
+            newBlog={newBlog}
+            setNewBlog={setNewBlog}
+          />
+        </Togglable>
+      </>} 
       {displayBlogs()}
     </div>
   )
