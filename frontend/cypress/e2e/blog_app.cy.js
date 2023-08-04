@@ -43,6 +43,18 @@ describe('Blog app login', function() {
       cy.contains('Title: test title')
     })
 
+    it('A blog can be liked', function() {
+      cy.contains('Title: test title').find('button').click()
+      cy.contains('Title: test title').parent().contains('like').click()
+      cy.contains('Title: test title').parent().contains('Likes: 1')
+    })
+
+    it('A blog can be liked a second time', function() {
+      cy.contains('Title: test title').find('button').click()
+      cy.contains('Title: test title').parent().contains('like').click()
+      cy.contains('Title: test title').parent().contains('Likes: 2')
+    })
+
     it('A blog can be deleted', function() {
       cy.contains('Title: test title').find('button').click()
       cy.contains('Title: test title').parent().contains('remove').click()
